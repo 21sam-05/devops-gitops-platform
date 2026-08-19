@@ -1,0 +1,25 @@
+services:
+
+  task-service:
+    build:
+      context: ./services/task_service
+    container_name: task-service
+    ports:
+      - "8000:8000"
+    environment:
+      NOTIFICATION_SERVICE_URL: http://notification-service:8001
+    networks:
+      - microservices
+
+  notification-service:
+    build:
+      context: ./services/notification_service
+    container_name: notification-service
+    ports:
+      - "8001:8001"
+    networks:
+      - microservices
+
+networks:
+  microservices:
+    driver: bridge
