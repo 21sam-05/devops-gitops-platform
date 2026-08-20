@@ -32,3 +32,12 @@ jobs:
       - name: Run tests
         run: |
           python -m pytest
+      
+
+      - name: Build task-service image
+        run: |
+          docker build -t task-service:${{ github.sha }} ./services/task_service
+
+      - name: Build notification-service image
+        run: |
+          docker build -t notification-service:${{ github.sha }} ./services/notification_service
