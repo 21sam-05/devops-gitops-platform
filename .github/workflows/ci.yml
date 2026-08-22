@@ -8,7 +8,9 @@ on:
   pull_request:
     branches:
       - main
-
+permissions:
+  contents: read
+  packages: write
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -32,12 +34,26 @@ jobs:
       - name: Run tests
         run: |
           python -m pytest
-      
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build task-service image
         run: |
-          docker build -t task-service:${{ github.sha }} ./services/task_service
+          docker build -t ghcr.io/${{ github.repository_owner }}/devops-gitops-platform/task-service:${{ github.sha }} ./services/task_service
 
       - name: Build notification-service image
         run: |
-          docker build -t notification-service:${{ github.sha }} ./services/notification_service
+          docker build -t ghcr.io/${{ github.repository_owner }}/devops-gitops-platform/notification-service:${{ github.sha }} ./services/notification_service
+      
+      - name: Push task-service image
+        run: |
+          docker push ghcr.io/${{ github.repository_owner }}/devops-gitops-platform/task-service:${{ github.sha }}
+
+      - name: Push notification-service image
+        run: |
+          docker push ghcr.io/${{ github.repository_owner }}/devops-gitops-platform/notification-service:${{ github.sha }}
