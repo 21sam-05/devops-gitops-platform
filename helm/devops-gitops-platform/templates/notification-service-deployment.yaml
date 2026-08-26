@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: notification-service
+
+spec:
+  replicas: {{ .Values.notificationService.replicaCount }}
+
+  selector:
+    matchLabels:
+      app: notification-service
+
+  template:
+    metadata:
+      labels:
+        app: notification-service
+
+    spec:
+      imagePullSecrets:
+        {{- toYaml .Values.imagePullSecrets | nindent 8 }}
+
+      containers:
+        - name: notification-service
+
+          image: "{{ .Values.notificationService.image.repository }}:{{ .Values.notificationService.image.tag }}"
+          imagePullPolicy: {{ .Values.notificationService.image.pullPolicy }}
+
+          ports:
+            - containerPort: 8001
+
+          resources:
+            {{- toYaml .Values.notificationService.resources | nindent 12 }}
+
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.notificationService.probes.liveness.path }}
+              port: 8001
+            initialDelaySeconds: {{ .Values.notificationService.probes.liveness.initialDelaySeconds }}
+            periodSeconds: {{ .Values.notificationService.probes.liveness.periodSeconds }}
+
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.notificationService.probes.readiness.path }}
+              port: 8001
+            initialDelaySeconds: {{ .Values.notificationService.probes.readiness.initialDelaySeconds }}
+            periodSeconds: {{ .Values.notificationService.probes.readiness.periodSeconds }}

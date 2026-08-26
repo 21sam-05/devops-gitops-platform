@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: task-service
+
+spec:
+  replicas: {{ .Values.taskService.replicaCount }}
+
+  selector:
+    matchLabels:
+      app: task-service
+
+  template:
+    metadata:
+      labels:
+        app: task-service
+
+    spec:
+      imagePullSecrets:
+        {{- toYaml .Values.imagePullSecrets | nindent 8 }}
+
+      containers:
+        - name: task-service
+
+          image: "{{ .Values.taskService.image.repository }}:{{ .Values.taskService.image.tag }}"
+          imagePullPolicy: {{ .Values.taskService.image.pullPolicy }}
+
+          ports:
+            - containerPort: 8000
+
+          env:
+            - name: NOTIFICATION_SERVICE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: task-service-config
+                  key: NOTIFICATION_SERVICE_URL
+
+          resources:
+            {{- toYaml .Values.taskService.resources | nindent 12 }}
+
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.taskService.probes.liveness.path }}
+              port: 8000
+            initialDelaySeconds: {{ .Values.taskService.probes.liveness.initialDelaySeconds }}
+            periodSeconds: {{ .Values.taskService.probes.liveness.periodSeconds }}
+
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.taskService.probes.readiness.path }}
+              port: 8000
+            initialDelaySeconds: {{ .Values.taskService.probes.readiness.initialDelaySeconds }}
+            periodSeconds: {{ .Values.taskService.probes.readiness.periodSeconds }}

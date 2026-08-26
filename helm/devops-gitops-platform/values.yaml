@@ -1,0 +1,66 @@
+taskService:
+  replicaCount: 1
+
+  image:
+    repository: ghcr.io/21sam-05/devops-gitops-platform/task-service
+    tag: a879eafe2604f5821fcbaddcded7ac20f65049a9
+    pullPolicy: IfNotPresent
+
+  service:
+    type: ClusterIP
+    port: 8000
+
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "128Mi"
+    limits:
+      cpu: "500m"
+      memory: "256Mi"
+
+  probes:
+    liveness:
+      path: /health
+      initialDelaySeconds: 5
+      periodSeconds: 10
+    readiness:
+      path: /health
+      initialDelaySeconds: 5
+      periodSeconds: 5
+
+
+notificationService:
+  replicaCount: 1
+
+  image:
+    repository: ghcr.io/21sam-05/devops-gitops-platform/notification-service
+    tag: a879eafe2604f5821fcbaddcded7ac20f65049a9
+    pullPolicy: IfNotPresent
+
+  service:
+    type: ClusterIP
+    port: 8001
+
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "128Mi"
+    limits:
+      cpu: "500m"
+      memory: "256Mi"
+
+  probes:
+    liveness:
+      path: /health
+      initialDelaySeconds: 5
+      periodSeconds: 10
+    readiness:
+      path: /health
+      initialDelaySeconds: 5
+      periodSeconds: 5
+
+
+notificationServiceUrl: http://notification-service:8001
+
+imagePullSecrets:
+  - name: ghcr-secret
