@@ -3,7 +3,7 @@ taskService:
 
   image:
     repository: ghcr.io/21sam-05/devops-gitops-platform/task-service
-    tag: f37768775ec8adcc320eb31ea05333559ada965e
+    tag: ae17569fce7ef89d17a330db0077674ef5abd288
     pullPolicy: IfNotPresent
 
   service:
@@ -40,7 +40,7 @@ notificationService:
 
   image:
     repository: ghcr.io/21sam-05/devops-gitops-platform/notification-service
-    tag: f37768775ec8adcc320eb31ea05333559ada965e
+    tag: ae17569fce7ef89d17a330db0077674ef5abd288
     pullPolicy: IfNotPresent
 
   service:
