@@ -28,6 +28,12 @@ taskService:
       initialDelaySeconds: 5
       periodSeconds: 5
 
+  autoscaling: 
+    enabled: 1
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 50
+    
+
 
 notificationService:
   replicaCount: 1
